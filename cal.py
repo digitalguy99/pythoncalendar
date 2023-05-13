@@ -2,15 +2,25 @@ import calendar
 import argparse
 from datetime import datetime
 
+# Setting calendar start day
+calendar.setfirstweekday(calendar.SUNDAY)
+
+# Allowing flags to be passed during execution
 parser = argparse.ArgumentParser()
-
-# Add an argument
 parser.add_argument('-y', '--year', type=int, required=False)
-# Parse the argument
+parser.add_argument('-m', '--month')
 args = parser.parse_args()
-# Print "Hello" + the user input argument
-# print('Hello,', args.name)
 
+# Setting variables
+cal_month = None
+
+if args.month:
+    if args.month not in [str(month_number) for month_number in list(range(1,13))]:
+        cal_month = list(calendar.month_name).index(args.month)
+    else:
+        cal_month = int(args.month)
+
+# Creating custom calendar
 class CustomCalendar(calendar.TextCalendar):
     def formatday(self, day, weekday, width):
         if day == 0:
@@ -24,12 +34,8 @@ def cal(month=None, year=None):
         month = datetime.now().month
     if not year:
         year = datetime.now().year
-    cal = CustomCalendar()
+    cal = CustomCalendar(calendar.SUNDAY)
     print(cal.formatmonth(year, month))
-
-# cal()
-
-# input_year = int(input("Input year: "))
 
 def print_calendar(year: int):
     cal = calendar.TextCalendar(calendar.SUNDAY)
@@ -68,8 +74,18 @@ def print_calendar(year: int):
                         quarter_str[i] += '   ' + month_str[i]
         print('\n'.join(quarter_str))
 
-if args.year:
+# Code to determine the calendar to print out
+if cal_month and args.year:
+    if cal_month == datetime.now().month and args.year == datetime.now().year:
+        cal()
+    else:
+        print(calendar.month(args.year, cal_month))
+elif args.year:
     print_calendar(args.year)
+elif cal_month:
+    if cal_month != datetime.now().month:
+        print(calendar.month(datetime.now().year, cal_month))
+    else:
+        cal()
 else:
     cal()
-# print_calendar(input_year)
