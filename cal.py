@@ -1,5 +1,6 @@
 import calendar
 import argparse
+import sys
 from datetime import datetime
 
 # Setting calendar start day
@@ -16,7 +17,11 @@ cal_month = None
 
 if args.month:
     if args.month not in [str(month_number) for month_number in list(range(1,13))]:
-        cal_month = list(calendar.month_name).index(args.month)
+        try:
+            cal_month = list(calendar.month_name).index(args.month.capitalize())
+        except:
+            print(f"Enter appropriate month number or full name!\ncal: error: argument -m/--month: invalid entry: '{args.month}'")
+            sys.exit()
     else:
         cal_month = int(args.month)
 
@@ -29,6 +34,7 @@ class CustomCalendar(calendar.TextCalendar):
             return f'\033[7m{day:>{width}}\033[m'
         return f'{day:>{width}}'
 
+# Function to print month calendar
 def cal(month=None, year=None):
     if not month:
         month = datetime.now().month
@@ -37,6 +43,7 @@ def cal(month=None, year=None):
     cal = CustomCalendar(calendar.SUNDAY)
     print(cal.formatmonth(year, month))
 
+# Function to print full year calendar
 def print_calendar(year: int):
     cal = calendar.TextCalendar(calendar.SUNDAY)
     today = datetime.now()
@@ -53,7 +60,7 @@ def print_calendar(year: int):
                     if len(days) > 0:
                         if i == 2 and len(days) < 7:
                             days = ['  '] * (7 - len(days)) + days
-                        elif i == len(month_str) - 2 and len(days) < 7:
+                        elif (i == len(month_str)-2) and (len(days) < 7):
                             days += ['  '] * (7 - len(days))
                         for j in range(len(days)):
                             if days[j].strip():
@@ -71,7 +78,13 @@ def print_calendar(year: int):
                         quarter_str[-1] = ' '*(40 if s_no == 2 else 20) + quarter_str[-1]
                         quarter_str.append('   ' + month_str[i])
                     else:
-                        quarter_str[i] += '   ' + month_str[i]
+                        if i != (len(month_str)-1):
+                            quarter_str[i] += '   ' + month_str[i]
+                        else:
+                            if len(month_str) >= len(quarter_str):
+                                quarter_str[i] += '   ' + month_str[i]
+                            else:
+                                quarter_str[i] += 20*' ' + '   ' + month_str[i]
         print('\n'.join(quarter_str))
 
 # Code to determine the calendar to print out
