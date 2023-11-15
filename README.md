@@ -1,8 +1,10 @@
 # pythoncalendar
 Linux inspired cli calendar program brought to life on Windows with Python
+*Requirement: any **Windows** version*
 
 ## Preview
-*Requirement: any **Windows** version*
+![image](https://github.com/digitalguy99/pythoncalendar/assets/52367722/1899d730-c8ec-4ca5-ae79-f0a557a205c8)
+
 
 ## Installation
 1. Open preferred console application.
@@ -23,6 +25,10 @@ options:
   -h, --help            show this help message and exit
   -y YEAR, --year YEAR
   -m MONTH, --month MONTH
+```
+or simply:
+```cmd
+cal -y <yyyy> -m <month full name or number>
 ```
 ### Examples
 * Displaying calendar of current date
