@@ -52,7 +52,7 @@ cal -y <yyyy> -m <month full name or number>
   ```
 
 ## Update
-1. Run the installation command.
+1. Run the [installation command](#installation).
 
 2. Type `y` and press enter when prompted the following:
    > Do you want to overwrite it? (y/n)
