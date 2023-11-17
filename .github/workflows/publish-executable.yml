@@ -1,0 +1,63 @@
+name: publish-executable
+
+on:
+  push:
+    paths:
+      - 'cal.py'
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+      shell: pwsh
+
+    - name: Build executable
+      run: pyinstaller --onefile cal.py
+      shell: pwsh
+
+    - name: Get Release
+      id: get_release
+      shell: pwsh
+      run: |
+        $response = Invoke-RestMethod -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/tags/{tag}" -Headers @{Authorization = "Bearer $env:GITHUB_TOKEN"}
+        echo "::set-output name=id::$($response.id)"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update Release
+      id: update_release
+      shell: pwsh
+      run: |
+        $body = @{
+            "tag_name" = "{tag}"
+            "name" = "Release {tag}"
+        } | ConvertTo-Json -Compress
+        Invoke-RestMethod -Method Patch -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/${{ steps.get_release.outputs.id }}" -Body $body -ContentType "application/json" -Headers @{Authorization = "Bearer $env:GITHUB_TOKEN"}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.update_release.outputs.upload_url }}
+        asset_path: ./dist/cal.exe
+        asset_name: cal.exe
+        asset_content_type: application/octet-stream
