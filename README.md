@@ -1,5 +1,6 @@
 # pythoncalendar
 Linux inspired cli calendar program brought to life on Windows with Python
+
 *Requirement: any **Windows** version*
 
 ## Preview
