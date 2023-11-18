@@ -1,0 +1,19 @@
+Text document showing all suggestions that can be taken up in the future
+
+1. GitHub Actions:
+    - Cache:
+        > create requirements.txt based on cal.py(updatable)
+        > cache all dependencies
+    - Workflow:
+        > add the following: "on: [push, workflow_dispatch]"
+
+2. cal.py:
+    - Syntax:
+        > support 3-letter month name
+
+3. README.md:
+    - Add troubleshooting section with `cmd` command to make `curl` that doesn't support multiple addresses work
+      by implementing `cd`
+
+4. Think of better way to implement workflow to push executable to release:
+    - How to keep having release version updated

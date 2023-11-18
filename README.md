@@ -10,7 +10,7 @@ Linux inspired cli calendar program brought to life on Windows with Python
 ## Installation
 1. Open preferred console application.
 
-2. Copy and paste the following:
+2. Copy, paste and run the following:
 
    ```cmd
    cmd /v /c "IF EXIST %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\cal.exe (set /p userinp=File already exists. Do you want to overwrite it? ^(y/n^) & IF /I !userinp! == y curl -kL -o %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\cal.exe https://github.com/digitalguy99/pythoncalendar/releases/download/v1.0.0/cal.exe) ELSE curl -kL -o %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\cal.exe https://github.com/digitalguy99/pythoncalendar/releases/download/v1.0.0/cal.exe"
