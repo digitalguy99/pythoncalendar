@@ -60,6 +60,12 @@ cal -y <yyyy> -m <month full name or number>
 
 3. Restart your console.
 
+## Troubleshooting
+If you are seeing some garbled characters on the calendar, try pasting and running the following:
+```cmd
+cmd /c "reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1 /f"
+```
+Then restart your console application.
 
 ## License
 © 2023 digitalguy99. This project is licensed under the terms of the MIT license.
