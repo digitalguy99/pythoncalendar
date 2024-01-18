@@ -48,7 +48,7 @@ jobs:
       id: new_release_body
       run: |
         $date_str = Get-Date
-        $body_str = 'New release as of ' + $date_str.ToString()
+        $body_str = 'Newest release as of ' + $date_str.ToString() + ' UTC.'
         echo "::set-output name=content::$body_str"
 
     - name: Create Release
@@ -77,6 +77,6 @@ jobs:
         sed -i "s/${{ steps.latest_release.outputs.tag_old }}/${{ steps.latest_release.outputs.tag }}/g" README.md
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config user.name "github-actions[bot]"
-        git commit -am "Updated README with installation of v${{ steps.latest_release.outputs.tag }}"
+        git commit -am "Updated README with installation of ${{ steps.latest_release.outputs.tag }}"
         git push
       shell: bash

@@ -18,6 +18,16 @@ Linux inspired cli calendar program brought to life on Windows with Python
 
 3. Restart your console.
 
+4. If you are facing any problem, check the [Troubleshooting](#troubleshooting) section.
+
+## Uninstalling
+
+Copy, paste and run the following:
+
+```cmd
+cmd /c "for /f "delims=" %i in ('where cal') do del "%i""
+```
+
 ## Usage
 ```cmd
 usage: cal [-h] [-y YEAR] [-m MONTH]
