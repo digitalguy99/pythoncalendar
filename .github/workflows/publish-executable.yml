@@ -1,6 +1,7 @@
 name: publish-executable
 
 on:
+  workflow_dispatch: null
   push:
     paths:
       - 'cal.py'
@@ -30,26 +31,34 @@ jobs:
       run: pyinstaller --onefile cal.py
       shell: pwsh
 
-    - name: Get Release
-      id: get_release
-      shell: pwsh
+    - name: Get latest release tag
+      id: latest_release
       run: |
-        $response = Invoke-RestMethod -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/tags/{tag}" -Headers @{Authorization = "Bearer $env:GITHUB_TOKEN"}
-        echo "::set-output name=id::$($response.id)"
+        $response = Invoke-RestMethod -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/latest" -Headers @{Authorization = "Bearer $env:GITHUB_TOKEN"}
+        $old_tag = $response.tag_name
+        echo "::set-output name=tag_old::$old_tag"
+        $tag = ($response.tag_name -replace 'v', '').split(".")
+        $new_tag = ([int]$tag[0] + 1).ToString()+'.0.0'
+        echo "::set-output name=tag::v$new_tag"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Update Release
-      id: update_release
-      shell: pwsh
+    - name: Write new release body
+      id: new_release_body
       run: |
-        $body = @{
-            "tag_name" = "{tag}"
-            "name" = "Release {tag}"
-        } | ConvertTo-Json -Compress
-        Invoke-RestMethod -Method Patch -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/${{ steps.get_release.outputs.id }}" -Body $body -ContentType "application/json" -Headers @{Authorization = "Bearer $env:GITHUB_TOKEN"}
+        $date_str = Get-Date
+        $body_str = 'New release as of ' + $date_str.ToString()
+        echo "::set-output name=content::$body_str"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.latest_release.outputs.tag }}
+        release_name: ${{ steps.latest_release.outputs.tag }}
+        body: ${{ steps.new_release_body.outputs.content }}
 
     - name: Upload Release Asset
       id: upload-release-asset 
@@ -57,7 +66,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.update_release.outputs.upload_url }}
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./dist/cal.exe
         asset_name: cal.exe
         asset_content_type: application/octet-stream
+
+    - name: Update README.md
+      run: |
+        sed -i "s/${{ steps.latest_release.outputs.tag_old }}/${{ steps.latest_release.outputs.tag }}/g" README.md
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config user.name "github-actions[bot]"
+        git commit -am "Updated README with installation of v${{ steps.latest_release.outputs.tag }}"
+        git push
