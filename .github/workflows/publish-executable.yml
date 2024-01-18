@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+    permissions: write-all
     runs-on: windows-latest
 
     steps:
@@ -78,3 +79,4 @@ jobs:
         git config user.name "github-actions[bot]"
         git commit -am "Updated README with installation of v${{ steps.latest_release.outputs.tag }}"
         git push
+      shell: bash
