@@ -38,8 +38,7 @@ jobs:
         $response = Invoke-RestMethod -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/latest" -Headers @{Authorization = "Bearer $env:GITHUB_TOKEN"}
         $old_tag = $response.tag_name
         echo "::set-output name=tag_old::$old_tag"
-        $tag = ($response.tag_name -replace 'v', '').split(".")
-        $new_tag = ([int]$tag[0] + 1).ToString()+'.0.0'
+        $new_tag = (Get-Content cal.py | Select-String -Pattern 'program_version = "(.*)"').Matches.Groups[1].Value
         echo "::set-output name=tag::v$new_tag"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

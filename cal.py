@@ -1,6 +1,7 @@
 import calendar
 import argparse
 import sys
+import os
 from datetime import datetime
 
 # Setting calendar start day
@@ -8,22 +9,43 @@ calendar.setfirstweekday(calendar.SUNDAY)
 
 # Allowing flags to be passed during execution
 parser = argparse.ArgumentParser()
-parser.add_argument('-y', '--year', type=int, required=False)
-parser.add_argument('-m', '--month')
+parser.add_argument('-y', '--year', action='append', type=int, required=False)
+parser.add_argument('-m', '--month', action='append')
+parser.add_argument('-v', '--version', action='store_true')
 args = parser.parse_args()
 
 # Setting variables
-cal_month = None
+cal_month, cal_year = None, None
+program_version = "4.0.0"
 
 if args.month:
-    if args.month not in [str(month_number) for month_number in list(range(1,13))]:
-        try:
-            cal_month = list(calendar.month_name).index(args.month.capitalize())
-        except:
-            print(f"Enter appropriate month number or full name!\ncal: error: argument -m/--month: invalid entry: '{args.month}'")
-            sys.exit()
+    if len(args.month) > 1:
+        print(f"{os.path.basename(__file__)}: error: argument -m/--month: too many arguments: 1 expected but given {len(args.month)}")
+        sys.exit()
     else:
-        cal_month = int(args.month)
+        month_string = args.month[0]
+        if month_string not in [str(month_number) for month_number in range(1,13)]:
+            try:
+                cal_month = list(calendar.month_name).index(month_string.capitalize())
+            except:
+                try:
+                    cal_month = list(calendar.month_abbr).index(month_string.capitalize())
+                except:
+                    print(
+                        "Enter appropriate month number or 3-letter/full name!",
+                        f"{os.path.basename(__file__)}: error: argument -m/--month: invalid entry: '{month_string}'",
+                        sep='\n'
+                    )
+                    sys.exit()
+        else:
+            cal_month = int(month_string)
+
+if args.year:
+    if len(args.year) > 1:
+        print(f"{os.path.basename(__file__)}: error: argument -y/--year: too many arguments: 1 expected but given {len(args.year)}")
+        sys.exit()
+    else:
+        cal_year = args.year[0]
 
 # Creating custom calendar
 class CustomCalendar(calendar.TextCalendar):
@@ -87,18 +109,20 @@ def print_calendar(year: int):
                                 quarter_str[i] += 20*' ' + '   ' + month_str[i]
         print('\n'.join(quarter_str))
 
-# Code to determine the calendar to print out
-if cal_month and args.year:
-    if cal_month == datetime.now().month and args.year == datetime.now().year:
+# Code to determine what to print out
+if cal_month and cal_year:
+    if cal_month == datetime.now().month and cal_year == datetime.now().year:
         cal()
     else:
-        print(calendar.month(args.year, cal_month))
-elif args.year:
-    print_calendar(args.year)
+        print(calendar.month(cal_year, cal_month))
+elif cal_year:
+    print_calendar(cal_year)
 elif cal_month:
     if cal_month != datetime.now().month:
         print(calendar.month(datetime.now().year, cal_month))
     else:
         cal()
+elif args.version:
+    print(f"pythoncalendar v{program_version}", "© 2023 digitalguy99", sep='\n')
 else:
     cal()
