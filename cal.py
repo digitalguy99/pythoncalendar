@@ -16,11 +16,11 @@ args = parser.parse_args()
 
 # Setting variables
 cal_month, cal_year = None, None
-program_version = "4.0.1"
+program_version = "4.0.2"
 
 if args.month:
     if len(args.month) > 1:
-        print(f"{os.path.basename(__file__)}: error: argument -m/--month: too many arguments: 1 expected but given {len(args.month)}")
+        print(f"{os.path.basename(sys.argv[0])}: error: argument -m/--month: too many arguments: 1 expected but given {len(args.month)}")
         sys.exit()
     else:
         month_string = args.month[0]
@@ -33,7 +33,7 @@ if args.month:
                 except:
                     print(
                         "Enter appropriate month number or 3-letter/full name!",
-                        f"{os.path.basename(__file__)}: error: argument -m/--month: invalid entry: '{month_string}'",
+                        f"{os.path.basename(sys.argv[0])}: error: argument -m/--month: invalid entry: '{month_string}'",
                         sep='\n'
                     )
                     sys.exit()
@@ -42,7 +42,7 @@ if args.month:
 
 if args.year:
     if len(args.year) > 1:
-        print(f"{os.path.basename(__file__)}: error: argument -y/--year: too many arguments: 1 expected but given {len(args.year)}")
+        print(f"{os.path.basename(sys.argv[0])}: error: argument -y/--year: too many arguments: 1 expected but given {len(args.year)}")
         sys.exit()
     else:
         cal_year = args.year[0]
