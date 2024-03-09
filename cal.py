@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 # Setting variables
 cal_month, cal_year = None, None
-program_version = "4.0.0"
+program_version = "4.0.1"
 
 if args.month:
     if len(args.month) > 1:
@@ -123,6 +123,6 @@ elif cal_month:
     else:
         cal()
 elif args.version:
-    print(f"pythoncalendar v{program_version}", "© 2023 digitalguy99", sep='\n')
+    print(f"pythoncalendar v{program_version}", f"© {datetime.now().year} digitalguy99", sep='\n')
 else:
     cal()

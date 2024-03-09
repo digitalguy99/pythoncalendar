@@ -78,4 +78,4 @@ cmd /c "reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1 /f"
 Then restart your console application.
 
 ## License
-© 2023 digitalguy99. This project is licensed under the terms of the MIT license.
+© 2024 digitalguy99. This project is licensed under the terms of the MIT license.
